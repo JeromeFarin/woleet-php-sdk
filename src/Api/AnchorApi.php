@@ -62,11 +62,6 @@ class AnchorApi
      */
     protected $headerSelector;
 
-    /**
-     * @param ClientInterface $client
-     * @param Configuration $config
-     * @param HeaderSelector $selector
-     */
     public function __construct(
         ClientInterface $client = null,
         Configuration $config = null,
@@ -99,7 +94,7 @@ class AnchorApi
      */
     public function createAnchor($body)
     {
-        list($response) = $this->createAnchorWithHttpInfo($body);
+        [$response] = $this->createAnchorWithHttpInfo($body);
         return $response;
     }
 
@@ -116,7 +111,7 @@ class AnchorApi
      */
     public function createAnchorWithHttpInfo($body)
     {
-        $returnType = '\WooletClient\Model\Anchor';
+        $returnType = '\\' . \WooletClient\Model\Anchor::class;
         $request = $this->createAnchorRequest($body);
         try {
             $options = $this->createHttpClientOption();
@@ -149,7 +144,7 @@ class AnchorApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -163,7 +158,7 @@ class AnchorApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\Anchor',
+                        '\\' . \WooletClient\Model\Anchor::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -187,9 +182,7 @@ class AnchorApi
     {
         return $this->createAnchorAsyncWithHttpInfo($body)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -205,7 +198,7 @@ class AnchorApi
      */
     public function createAnchorAsyncWithHttpInfo($body)
     {
-        $returnType = '\WooletClient\Model\Anchor';
+        $returnType = '\\' . \WooletClient\Model\Anchor::class;
         $request = $this->createAnchorRequest($body);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -217,7 +210,7 @@ class AnchorApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -226,7 +219,7 @@ class AnchorApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -286,7 +279,7 @@ class AnchorApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -301,11 +294,11 @@ class AnchorApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -326,7 +319,7 @@ class AnchorApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -414,9 +407,7 @@ class AnchorApi
     {
         return $this->deleteAnchorAsyncWithHttpInfo($anchor_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -437,10 +428,8 @@ class AnchorApi
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
             ->then(
-                function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
-                },
-                function ($exception) {
+                fn($response) => [null, $response->getStatusCode(), $response->getHeaders()],
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -505,7 +494,7 @@ class AnchorApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -520,11 +509,11 @@ class AnchorApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -545,7 +534,7 @@ class AnchorApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'DELETE',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -567,7 +556,7 @@ class AnchorApi
      */
     public function getAnchor($anchor_id)
     {
-        list($response) = $this->getAnchorWithHttpInfo($anchor_id);
+        [$response] = $this->getAnchorWithHttpInfo($anchor_id);
         return $response;
     }
 
@@ -584,7 +573,7 @@ class AnchorApi
      */
     public function getAnchorWithHttpInfo($anchor_id)
     {
-        $returnType = '\WooletClient\Model\Anchor';
+        $returnType = '\\' . \WooletClient\Model\Anchor::class;
         $request = $this->getAnchorRequest($anchor_id);
         try {
             $options = $this->createHttpClientOption();
@@ -617,7 +606,7 @@ class AnchorApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -631,7 +620,7 @@ class AnchorApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\Anchor',
+                        '\\' . \WooletClient\Model\Anchor::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -655,9 +644,7 @@ class AnchorApi
     {
         return $this->getAnchorAsyncWithHttpInfo($anchor_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -673,7 +660,7 @@ class AnchorApi
      */
     public function getAnchorAsyncWithHttpInfo($anchor_id)
     {
-        $returnType = '\WooletClient\Model\Anchor';
+        $returnType = '\\' . \WooletClient\Model\Anchor::class;
         $request = $this->getAnchorRequest($anchor_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -685,7 +672,7 @@ class AnchorApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -694,7 +681,7 @@ class AnchorApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -759,7 +746,7 @@ class AnchorApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -774,11 +761,11 @@ class AnchorApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -799,7 +786,7 @@ class AnchorApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -821,7 +808,7 @@ class AnchorApi
      */
     public function getAnchorAttestation($anchor_id)
     {
-        list($response) = $this->getAnchorAttestationWithHttpInfo($anchor_id);
+        [$response] = $this->getAnchorAttestationWithHttpInfo($anchor_id);
         return $response;
     }
 
@@ -838,7 +825,7 @@ class AnchorApi
      */
     public function getAnchorAttestationWithHttpInfo($anchor_id)
     {
-        $returnType = '\WooletClient\Model\PdfFile';
+        $returnType = '\\' . \WooletClient\Model\PdfFile::class;
         $request = $this->getAnchorAttestationRequest($anchor_id);
         try {
             $options = $this->createHttpClientOption();
@@ -871,7 +858,7 @@ class AnchorApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -885,7 +872,7 @@ class AnchorApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\PdfFile',
+                        '\\' . \WooletClient\Model\PdfFile::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -909,9 +896,7 @@ class AnchorApi
     {
         return $this->getAnchorAttestationAsyncWithHttpInfo($anchor_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -927,7 +912,7 @@ class AnchorApi
      */
     public function getAnchorAttestationAsyncWithHttpInfo($anchor_id)
     {
-        $returnType = '\WooletClient\Model\PdfFile';
+        $returnType = '\\' . \WooletClient\Model\PdfFile::class;
         $request = $this->getAnchorAttestationRequest($anchor_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -939,7 +924,7 @@ class AnchorApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -948,7 +933,7 @@ class AnchorApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1013,7 +998,7 @@ class AnchorApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1028,11 +1013,11 @@ class AnchorApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1053,7 +1038,7 @@ class AnchorApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1078,7 +1063,7 @@ class AnchorApi
      */
     public function searchAnchorIds($page = '0', $size = '20', $hash = null, $signed_hash = null)
     {
-        list($response) = $this->searchAnchorIdsWithHttpInfo($page, $size, $hash, $signed_hash);
+        [$response] = $this->searchAnchorIdsWithHttpInfo($page, $size, $hash, $signed_hash);
         return $response;
     }
 
@@ -1098,7 +1083,7 @@ class AnchorApi
      */
     public function searchAnchorIdsWithHttpInfo($page = '0', $size = '20', $hash = null, $signed_hash = null)
     {
-        $returnType = '\WooletClient\Model\AnchorIds';
+        $returnType = '\\' . \WooletClient\Model\AnchorIds::class;
         $request = $this->searchAnchorIdsRequest($page, $size, $hash, $signed_hash);
         try {
             $options = $this->createHttpClientOption();
@@ -1131,7 +1116,7 @@ class AnchorApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -1145,7 +1130,7 @@ class AnchorApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\AnchorIds',
+                        '\\' . \WooletClient\Model\AnchorIds::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1172,9 +1157,7 @@ class AnchorApi
     {
         return $this->searchAnchorIdsAsyncWithHttpInfo($page, $size, $hash, $signed_hash)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -1193,7 +1176,7 @@ class AnchorApi
      */
     public function searchAnchorIdsAsyncWithHttpInfo($page = '0', $size = '20', $hash = null, $signed_hash = null)
     {
-        $returnType = '\WooletClient\Model\AnchorIds';
+        $returnType = '\\' . \WooletClient\Model\AnchorIds::class;
         $request = $this->searchAnchorIdsRequest($page, $size, $hash, $signed_hash);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1205,7 +1188,7 @@ class AnchorApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -1214,7 +1197,7 @@ class AnchorApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1285,7 +1268,7 @@ class AnchorApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1300,11 +1283,11 @@ class AnchorApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1325,7 +1308,7 @@ class AnchorApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1354,7 +1337,7 @@ class AnchorApi
      */
     public function searchAnchors($page = '0', $size = '20', $direction = 'ASC', $sort = 'created', $name = null, $hash = null, $signed_hash = null, $tags = null)
     {
-        list($response) = $this->searchAnchorsWithHttpInfo($page, $size, $direction, $sort, $name, $hash, $signed_hash, $tags);
+        [$response] = $this->searchAnchorsWithHttpInfo($page, $size, $direction, $sort, $name, $hash, $signed_hash, $tags);
         return $response;
     }
 
@@ -1378,7 +1361,7 @@ class AnchorApi
      */
     public function searchAnchorsWithHttpInfo($page = '0', $size = '20', $direction = 'ASC', $sort = 'created', $name = null, $hash = null, $signed_hash = null, $tags = null)
     {
-        $returnType = '\WooletClient\Model\Anchors';
+        $returnType = '\\' . \WooletClient\Model\Anchors::class;
         $request = $this->searchAnchorsRequest($page, $size, $direction, $sort, $name, $hash, $signed_hash, $tags);
         try {
             $options = $this->createHttpClientOption();
@@ -1411,7 +1394,7 @@ class AnchorApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -1425,7 +1408,7 @@ class AnchorApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\Anchors',
+                        '\\' . \WooletClient\Model\Anchors::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1456,9 +1439,7 @@ class AnchorApi
     {
         return $this->searchAnchorsAsyncWithHttpInfo($page, $size, $direction, $sort, $name, $hash, $signed_hash, $tags)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -1481,7 +1462,7 @@ class AnchorApi
      */
     public function searchAnchorsAsyncWithHttpInfo($page = '0', $size = '20', $direction = 'ASC', $sort = 'created', $name = null, $hash = null, $signed_hash = null, $tags = null)
     {
-        $returnType = '\WooletClient\Model\Anchors';
+        $returnType = '\\' . \WooletClient\Model\Anchors::class;
         $request = $this->searchAnchorsRequest($page, $size, $direction, $sort, $name, $hash, $signed_hash, $tags);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1493,7 +1474,7 @@ class AnchorApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -1502,7 +1483,7 @@ class AnchorApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1596,7 +1577,7 @@ class AnchorApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1611,11 +1592,11 @@ class AnchorApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1636,7 +1617,7 @@ class AnchorApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1659,7 +1640,7 @@ class AnchorApi
      */
     public function updateAnchor($body, $anchor_id)
     {
-        list($response) = $this->updateAnchorWithHttpInfo($body, $anchor_id);
+        [$response] = $this->updateAnchorWithHttpInfo($body, $anchor_id);
         return $response;
     }
 
@@ -1677,7 +1658,7 @@ class AnchorApi
      */
     public function updateAnchorWithHttpInfo($body, $anchor_id)
     {
-        $returnType = '\WooletClient\Model\Anchor';
+        $returnType = '\\' . \WooletClient\Model\Anchor::class;
         $request = $this->updateAnchorRequest($body, $anchor_id);
         try {
             $options = $this->createHttpClientOption();
@@ -1710,7 +1691,7 @@ class AnchorApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -1724,7 +1705,7 @@ class AnchorApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\Anchor',
+                        '\\' . \WooletClient\Model\Anchor::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1749,9 +1730,7 @@ class AnchorApi
     {
         return $this->updateAnchorAsyncWithHttpInfo($body, $anchor_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -1768,7 +1747,7 @@ class AnchorApi
      */
     public function updateAnchorAsyncWithHttpInfo($body, $anchor_id)
     {
-        $returnType = '\WooletClient\Model\Anchor';
+        $returnType = '\\' . \WooletClient\Model\Anchor::class;
         $request = $this->updateAnchorRequest($body, $anchor_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1780,7 +1759,7 @@ class AnchorApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -1789,7 +1768,7 @@ class AnchorApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1864,7 +1843,7 @@ class AnchorApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1879,11 +1858,11 @@ class AnchorApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1904,7 +1883,7 @@ class AnchorApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'PUT',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),

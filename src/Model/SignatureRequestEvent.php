@@ -38,9 +38,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class SignatureRequestEvent implements ModelInterface, ArrayAccess
+class SignatureRequestEvent implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -161,12 +161,12 @@ class SignatureRequestEvent implements ModelInterface, ArrayAccess
         return self::$swaggerModelName;
     }
 
-    const TYPE_DATA_VERIFIED = 'DATA_VERIFIED';
-    const TYPE_DATA_REVIEWED = 'DATA_REVIEWED';
-    const TYPE_TCU_ACCEPTED = 'TCU_ACCEPTED';
-    const TYPE_TCU_REFUSED = 'TCU_REFUSED';
-    const TYPE_SIGN_ACCEPTED = 'SIGN_ACCEPTED';
-    const TYPE_SIGN_REFUSED = 'SIGN_REFUSED';
+    final const TYPE_DATA_VERIFIED = 'DATA_VERIFIED';
+    final const TYPE_DATA_REVIEWED = 'DATA_REVIEWED';
+    final const TYPE_TCU_ACCEPTED = 'TCU_ACCEPTED';
+    final const TYPE_TCU_REFUSED = 'TCU_REFUSED';
+    final const TYPE_SIGN_ACCEPTED = 'SIGN_ACCEPTED';
+    final const TYPE_SIGN_REFUSED = 'SIGN_REFUSED';
 
     /**
      * Gets allowable values of the enum
@@ -199,9 +199,9 @@ class SignatureRequestEvent implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['signee_id'] = isset($data['signee_id']) ? $data['signee_id'] : null;
-        $this->container['type'] = isset($data['type']) ? $data['type'] : null;
-        $this->container['comment'] = isset($data['comment']) ? $data['comment'] : null;
+        $this->container['signee_id'] = $data['signee_id'] ?? null;
+        $this->container['type'] = $data['type'] ?? null;
+        $this->container['comment'] = $data['comment'] ?? null;
     }
 
     /**
@@ -339,7 +339,7 @@ class SignatureRequestEvent implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -350,7 +350,7 @@ class SignatureRequestEvent implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -376,14 +376,14 @@ class SignatureRequestEvent implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

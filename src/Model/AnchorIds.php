@@ -39,9 +39,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class AnchorIds implements ModelInterface, ArrayAccess
+class AnchorIds implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -203,14 +203,14 @@ class AnchorIds implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['content'] = isset($data['content']) ? $data['content'] : null;
-        $this->container['first'] = isset($data['first']) ? $data['first'] : null;
-        $this->container['last'] = isset($data['last']) ? $data['last'] : null;
-        $this->container['total_pages'] = isset($data['total_pages']) ? $data['total_pages'] : null;
-        $this->container['total_elements'] = isset($data['total_elements']) ? $data['total_elements'] : null;
-        $this->container['number_of_elements'] = isset($data['number_of_elements']) ? $data['number_of_elements'] : null;
-        $this->container['size'] = isset($data['size']) ? $data['size'] : null;
-        $this->container['number'] = isset($data['number']) ? $data['number'] : null;
+        $this->container['content'] = $data['content'] ?? null;
+        $this->container['first'] = $data['first'] ?? null;
+        $this->container['last'] = $data['last'] ?? null;
+        $this->container['total_pages'] = $data['total_pages'] ?? null;
+        $this->container['total_elements'] = $data['total_elements'] ?? null;
+        $this->container['number_of_elements'] = $data['number_of_elements'] ?? null;
+        $this->container['size'] = $data['size'] ?? null;
+        $this->container['number'] = $data['number'] ?? null;
     }
 
     /**
@@ -441,7 +441,7 @@ class AnchorIds implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -452,7 +452,7 @@ class AnchorIds implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -478,14 +478,14 @@ class AnchorIds implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

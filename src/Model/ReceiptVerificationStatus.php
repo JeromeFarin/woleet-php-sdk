@@ -38,9 +38,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class ReceiptVerificationStatus implements ModelInterface, ArrayAccess
+class ReceiptVerificationStatus implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -59,9 +59,9 @@ class ReceiptVerificationStatus implements ModelInterface, ArrayAccess
         'text' => 'string',
         'timestamp' => 'int',
         'confirmations' => 'int',
-        'timestamp_verification_status' => '\WooletClient\Model\TimestampVerificationStatus',
-        'signature_verification_status' => '\WooletClient\Model\SignatureVerificationStatus',
-        'identity_verification_status' => '\WooletClient\Model\IdentityVerificationStatus'];
+        'timestamp_verification_status' => '\\' . \WooletClient\Model\TimestampVerificationStatus::class,
+        'signature_verification_status' => '\\' . \WooletClient\Model\SignatureVerificationStatus::class,
+        'identity_verification_status' => '\\' . \WooletClient\Model\IdentityVerificationStatus::class];
 
     /**
      * Array of property to format mappings. Used for (de)serialization
@@ -181,13 +181,13 @@ class ReceiptVerificationStatus implements ModelInterface, ArrayAccess
         return self::$swaggerModelName;
     }
 
-    const CODE_VERIFIED = 'VERIFIED';
-    const CODE_TX_NOT_SENT = 'TX_NOT_SENT';
-    const CODE_TX_NOT_CONFIRMED = 'TX_NOT_CONFIRMED';
-    const CODE_INVALID_PROOF = 'INVALID_PROOF';
-    const CODE_TX_NOT_FOUND = 'TX_NOT_FOUND';
-    const CODE_TX_MISMATCH_RECEIPT = 'TX_MISMATCH_RECEIPT';
-    const CODE_INVALID_SIGNATURE = 'INVALID_SIGNATURE';
+    final const CODE_VERIFIED = 'VERIFIED';
+    final const CODE_TX_NOT_SENT = 'TX_NOT_SENT';
+    final const CODE_TX_NOT_CONFIRMED = 'TX_NOT_CONFIRMED';
+    final const CODE_INVALID_PROOF = 'INVALID_PROOF';
+    final const CODE_TX_NOT_FOUND = 'TX_NOT_FOUND';
+    final const CODE_TX_MISMATCH_RECEIPT = 'TX_MISMATCH_RECEIPT';
+    final const CODE_INVALID_SIGNATURE = 'INVALID_SIGNATURE';
 
     /**
      * Gets allowable values of the enum
@@ -221,13 +221,13 @@ class ReceiptVerificationStatus implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['code'] = isset($data['code']) ? $data['code'] : null;
-        $this->container['text'] = isset($data['text']) ? $data['text'] : null;
-        $this->container['timestamp'] = isset($data['timestamp']) ? $data['timestamp'] : null;
-        $this->container['confirmations'] = isset($data['confirmations']) ? $data['confirmations'] : null;
-        $this->container['timestamp_verification_status'] = isset($data['timestamp_verification_status']) ? $data['timestamp_verification_status'] : null;
-        $this->container['signature_verification_status'] = isset($data['signature_verification_status']) ? $data['signature_verification_status'] : null;
-        $this->container['identity_verification_status'] = isset($data['identity_verification_status']) ? $data['identity_verification_status'] : null;
+        $this->container['code'] = $data['code'] ?? null;
+        $this->container['text'] = $data['text'] ?? null;
+        $this->container['timestamp'] = $data['timestamp'] ?? null;
+        $this->container['confirmations'] = $data['confirmations'] ?? null;
+        $this->container['timestamp_verification_status'] = $data['timestamp_verification_status'] ?? null;
+        $this->container['signature_verification_status'] = $data['signature_verification_status'] ?? null;
+        $this->container['identity_verification_status'] = $data['identity_verification_status'] ?? null;
     }
 
     /**
@@ -451,7 +451,7 @@ class ReceiptVerificationStatus implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -462,7 +462,7 @@ class ReceiptVerificationStatus implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -488,14 +488,14 @@ class ReceiptVerificationStatus implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

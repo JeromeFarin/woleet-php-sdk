@@ -38,9 +38,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class User implements ModelInterface, ArrayAccess
+class User implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -61,7 +61,7 @@ class User implements ModelInterface, ArrayAccess
         'email' => 'string',
         'password' => 'string',
         'roles' => 'string[]',
-        'info' => '\WooletClient\Model\Info',
+        'info' => '\\' . \WooletClient\Model\Info::class,
         'status' => 'string'];
 
     /**
@@ -186,11 +186,11 @@ class User implements ModelInterface, ArrayAccess
         return self::$swaggerModelName;
     }
 
-    const ROLES_USER = 'ROLE_USER';
-    const ROLES_DOMAIN_ADMIN = 'ROLE_DOMAIN_ADMIN';
-    const STATUS_PENDING = 'PENDING';
-    const STATUS_APPROVED = 'APPROVED';
-    const STATUS_DISABLED = 'DISABLED';
+    final const ROLES_USER = 'ROLE_USER';
+    final const ROLES_DOMAIN_ADMIN = 'ROLE_DOMAIN_ADMIN';
+    final const STATUS_PENDING = 'PENDING';
+    final const STATUS_APPROVED = 'APPROVED';
+    final const STATUS_DISABLED = 'DISABLED';
 
     /**
      * Gets allowable values of the enum
@@ -232,14 +232,14 @@ class User implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
-        $this->container['created'] = isset($data['created']) ? $data['created'] : null;
-        $this->container['last_modified'] = isset($data['last_modified']) ? $data['last_modified'] : null;
-        $this->container['email'] = isset($data['email']) ? $data['email'] : null;
-        $this->container['password'] = isset($data['password']) ? $data['password'] : null;
-        $this->container['roles'] = isset($data['roles']) ? $data['roles'] : null;
-        $this->container['info'] = isset($data['info']) ? $data['info'] : null;
-        $this->container['status'] = isset($data['status']) ? $data['status'] : 'PENDING';
+        $this->container['id'] = $data['id'] ?? null;
+        $this->container['created'] = $data['created'] ?? null;
+        $this->container['last_modified'] = $data['last_modified'] ?? null;
+        $this->container['email'] = $data['email'] ?? null;
+        $this->container['password'] = $data['password'] ?? null;
+        $this->container['roles'] = $data['roles'] ?? null;
+        $this->container['info'] = $data['info'] ?? null;
+        $this->container['status'] = $data['status'] ?? 'PENDING';
     }
 
     /**
@@ -510,7 +510,7 @@ class User implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -521,7 +521,7 @@ class User implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -547,14 +547,14 @@ class User implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

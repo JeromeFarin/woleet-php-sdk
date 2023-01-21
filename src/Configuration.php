@@ -36,7 +36,7 @@ namespace WooletClient;
  */
 class Configuration
 {
-    private static $defaultConfiguration;
+    private static ?\WooletClient\Configuration $defaultConfiguration = null;
 
     /**
      * Associate array to store API key(s)
@@ -139,7 +139,7 @@ class Configuration
      */
     public function getApiKey($apiKeyIdentifier)
     {
-        return isset($this->apiKeys[$apiKeyIdentifier]) ? $this->apiKeys[$apiKeyIdentifier] : null;
+        return $this->apiKeys[$apiKeyIdentifier] ?? null;
     }
 
     /**
@@ -165,7 +165,7 @@ class Configuration
      */
     public function getApiKeyPrefix($apiKeyIdentifier)
     {
-        return isset($this->apiKeyPrefixes[$apiKeyIdentifier]) ? $this->apiKeyPrefixes[$apiKeyIdentifier] : null;
+        return $this->apiKeyPrefixes[$apiKeyIdentifier] ?? null;
     }
 
     /**

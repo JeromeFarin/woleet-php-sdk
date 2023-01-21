@@ -38,9 +38,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class SignatureRequest implements ModelInterface, ArrayAccess
+class SignatureRequest implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -59,7 +59,7 @@ class SignatureRequest implements ModelInterface, ArrayAccess
         'created' => 'int',
         'last_modified' => 'int',
         'name' => 'string',
-        'state' => '\WooletClient\Model\SignatureRequestState',
+        'state' => '\\' . \WooletClient\Model\SignatureRequestState::class,
         'callback_url' => 'string',
         'vars' => 'object',
         'lang' => 'string',
@@ -282,30 +282,30 @@ class SignatureRequest implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
-        $this->container['created'] = isset($data['created']) ? $data['created'] : null;
-        $this->container['last_modified'] = isset($data['last_modified']) ? $data['last_modified'] : null;
-        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
-        $this->container['state'] = isset($data['state']) ? $data['state'] : null;
-        $this->container['callback_url'] = isset($data['callback_url']) ? $data['callback_url'] : null;
-        $this->container['vars'] = isset($data['vars']) ? $data['vars'] : null;
-        $this->container['lang'] = isset($data['lang']) ? $data['lang'] : null;
-        $this->container['public'] = isset($data['public']) ? $data['public'] : null;
-        $this->container['hash_to_sign'] = isset($data['hash_to_sign']) ? $data['hash_to_sign'] : null;
-        $this->container['activation'] = isset($data['activation']) ? $data['activation'] : null;
-        $this->container['deadline'] = isset($data['deadline']) ? $data['deadline'] : null;
-        $this->container['identity_url'] = isset($data['identity_url']) ? $data['identity_url'] : null;
-        $this->container['file_name'] = isset($data['file_name']) ? $data['file_name'] : null;
-        $this->container['file_url'] = isset($data['file_url']) ? $data['file_url'] : null;
-        $this->container['max_signatures'] = isset($data['max_signatures']) ? $data['max_signatures'] : null;
-        $this->container['authorized_signees'] = isset($data['authorized_signees']) ? $data['authorized_signees'] : null;
-        $this->container['watchers'] = isset($data['watchers']) ? $data['watchers'] : null;
-        $this->container['ordered'] = isset($data['ordered']) ? $data['ordered'] : null;
-        $this->container['anchors'] = isset($data['anchors']) ? $data['anchors'] : null;
-        $this->container['audit_trail_data'] = isset($data['audit_trail_data']) ? $data['audit_trail_data'] : null;
-        $this->container['audit_trail_anchor_id'] = isset($data['audit_trail_anchor_id']) ? $data['audit_trail_anchor_id'] : null;
-        $this->container['proof_bundle_complete'] = isset($data['proof_bundle_complete']) ? $data['proof_bundle_complete'] : null;
-        $this->container['test_mode'] = isset($data['test_mode']) ? $data['test_mode'] : null;
+        $this->container['id'] = $data['id'] ?? null;
+        $this->container['created'] = $data['created'] ?? null;
+        $this->container['last_modified'] = $data['last_modified'] ?? null;
+        $this->container['name'] = $data['name'] ?? null;
+        $this->container['state'] = $data['state'] ?? null;
+        $this->container['callback_url'] = $data['callback_url'] ?? null;
+        $this->container['vars'] = $data['vars'] ?? null;
+        $this->container['lang'] = $data['lang'] ?? null;
+        $this->container['public'] = $data['public'] ?? null;
+        $this->container['hash_to_sign'] = $data['hash_to_sign'] ?? null;
+        $this->container['activation'] = $data['activation'] ?? null;
+        $this->container['deadline'] = $data['deadline'] ?? null;
+        $this->container['identity_url'] = $data['identity_url'] ?? null;
+        $this->container['file_name'] = $data['file_name'] ?? null;
+        $this->container['file_url'] = $data['file_url'] ?? null;
+        $this->container['max_signatures'] = $data['max_signatures'] ?? null;
+        $this->container['authorized_signees'] = $data['authorized_signees'] ?? null;
+        $this->container['watchers'] = $data['watchers'] ?? null;
+        $this->container['ordered'] = $data['ordered'] ?? null;
+        $this->container['anchors'] = $data['anchors'] ?? null;
+        $this->container['audit_trail_data'] = $data['audit_trail_data'] ?? null;
+        $this->container['audit_trail_anchor_id'] = $data['audit_trail_anchor_id'] ?? null;
+        $this->container['proof_bundle_complete'] = $data['proof_bundle_complete'] ?? null;
+        $this->container['test_mode'] = $data['test_mode'] ?? null;
     }
 
     /**
@@ -910,7 +910,7 @@ class SignatureRequest implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -921,7 +921,7 @@ class SignatureRequest implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -947,14 +947,14 @@ class SignatureRequest implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

@@ -44,7 +44,7 @@ class ObjectSerializer
      *
      * @return string|object serialized form of $data
      */
-    public static function sanitizeForSerialization($data, $format = null)
+    public static function sanitizeForSerialization(mixed $data, $format = null): string|object
     {
         if (is_scalar($data) || null === $data) {
             return $data;
@@ -69,7 +69,7 @@ class ObjectSerializer
                     throw new \InvalidArgumentException("Invalid value for enum '$swaggerType', must be one of: '$imploded'");
                 }
                 if ($value !== null) {
-                    $values[$data::attributeMap()[$property]] = self::sanitizeForSerialization($value, $swaggerType, $formats[$property]);
+                    $values[$data::attributeMap()[$property]] = self::sanitizeForSerialization($value, $swaggerType);
                 }
             }
             return (object)$values;
@@ -119,7 +119,7 @@ class ObjectSerializer
      *
      * @return string the serialized object
      */
-    public static function toQueryValue($object, $format = null)
+    public static function toQueryValue(array|string|\DateTime $object, $format = null)
     {
         if (is_array($object)) {
             return implode(',', $object);
@@ -151,7 +151,7 @@ class ObjectSerializer
      *
      * @return string the form string
      */
-    public static function toFormValue($value)
+    public static function toFormValue(string|\SplFileObject $value)
     {
         if ($value instanceof \SplFileObject) {
             return $value->getRealPath();
@@ -171,7 +171,7 @@ class ObjectSerializer
      *
      * @return string the header string
      */
-    public static function toString($value, $format = null)
+    public static function toString(string|\DateTime $value, $format = null)
     {
         if ($value instanceof \DateTime) {
             return ($format === 'date') ? $value->format('Y-m-d') : $value->format(\DateTime::ATOM);
@@ -197,18 +197,12 @@ class ObjectSerializer
             // need to fix the result of multidimensional arrays.
             return preg_replace('/%5B[0-9]+%5D=/', '=', http_build_query($collection, '', '&'));
         }
-        switch ($collectionFormat) {
-            case 'pipes':
-                return implode('|', $collection);
-            case 'tsv':
-                return implode("\t", $collection);
-            case 'ssv':
-                return implode(' ', $collection);
-            case 'csv':
-                // Deliberate fall through. CSV is default format.
-            default:
-                return implode(',', $collection);
-        }
+        return match ($collectionFormat) {
+            'pipes' => implode('|', $collection),
+            'tsv' => implode("\t", $collection),
+            'ssv' => implode(' ', $collection),
+            default => implode(',', $collection),
+        };
     }
 
     /**
@@ -221,11 +215,11 @@ class ObjectSerializer
      *
      * @return object|array|null an single or an array of $class instances
      */
-    public static function deserialize($data, $class, $httpHeaders = null)
+    public static function deserialize(mixed $data, $class, $httpHeaders = null)
     {
         if (null === $data) {
             return null;
-        } elseif (substr($class, 0, 4) === 'map[') { // for associative array e.g. map[string,int]
+        } elseif (str_starts_with($class, 'map[')) { // for associative array e.g. map[string,int]
             $inner = substr($class, 4, -1);
             $deserialized = [];
             if (strrpos($inner, ",") !== false) {

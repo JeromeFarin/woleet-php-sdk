@@ -62,11 +62,6 @@ class ReceiptApi
      */
     protected $headerSelector;
 
-    /**
-     * @param ClientInterface $client
-     * @param Configuration $config
-     * @param HeaderSelector $selector
-     */
     public function __construct(
         ClientInterface $client = null,
         Configuration $config = null,
@@ -99,7 +94,7 @@ class ReceiptApi
      */
     public function getOTSReceipt($anchor_id)
     {
-        list($response) = $this->getOTSReceiptWithHttpInfo($anchor_id);
+        [$response] = $this->getOTSReceiptWithHttpInfo($anchor_id);
         return $response;
     }
 
@@ -116,7 +111,7 @@ class ReceiptApi
      */
     public function getOTSReceiptWithHttpInfo($anchor_id)
     {
-        $returnType = '\WooletClient\Model\OtsReceipt';
+        $returnType = '\\' . \WooletClient\Model\OtsReceipt::class;
         $request = $this->getOTSReceiptRequest($anchor_id);
         try {
             $options = $this->createHttpClientOption();
@@ -149,7 +144,7 @@ class ReceiptApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -163,7 +158,7 @@ class ReceiptApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\OtsReceipt',
+                        '\\' . \WooletClient\Model\OtsReceipt::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -187,9 +182,7 @@ class ReceiptApi
     {
         return $this->getOTSReceiptAsyncWithHttpInfo($anchor_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -205,7 +198,7 @@ class ReceiptApi
      */
     public function getOTSReceiptAsyncWithHttpInfo($anchor_id)
     {
-        $returnType = '\WooletClient\Model\OtsReceipt';
+        $returnType = '\\' . \WooletClient\Model\OtsReceipt::class;
         $request = $this->getOTSReceiptRequest($anchor_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -217,7 +210,7 @@ class ReceiptApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -226,7 +219,7 @@ class ReceiptApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -291,7 +284,7 @@ class ReceiptApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -306,11 +299,11 @@ class ReceiptApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -331,7 +324,7 @@ class ReceiptApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -354,7 +347,7 @@ class ReceiptApi
      */
     public function getReceipt($anchor_id, $allow_partial = null)
     {
-        list($response) = $this->getReceiptWithHttpInfo($anchor_id, $allow_partial);
+        [$response] = $this->getReceiptWithHttpInfo($anchor_id, $allow_partial);
         return $response;
     }
 
@@ -372,7 +365,7 @@ class ReceiptApi
      */
     public function getReceiptWithHttpInfo($anchor_id, $allow_partial = null)
     {
-        $returnType = '\WooletClient\Model\Receipt';
+        $returnType = '\\' . \WooletClient\Model\Receipt::class;
         $request = $this->getReceiptRequest($anchor_id, $allow_partial);
         try {
             $options = $this->createHttpClientOption();
@@ -405,7 +398,7 @@ class ReceiptApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -419,7 +412,7 @@ class ReceiptApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\Receipt',
+                        '\\' . \WooletClient\Model\Receipt::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -444,9 +437,7 @@ class ReceiptApi
     {
         return $this->getReceiptAsyncWithHttpInfo($anchor_id, $allow_partial)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -463,7 +454,7 @@ class ReceiptApi
      */
     public function getReceiptAsyncWithHttpInfo($anchor_id, $allow_partial = null)
     {
-        $returnType = '\WooletClient\Model\Receipt';
+        $returnType = '\\' . \WooletClient\Model\Receipt::class;
         $request = $this->getReceiptRequest($anchor_id, $allow_partial);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -475,7 +466,7 @@ class ReceiptApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -484,7 +475,7 @@ class ReceiptApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -554,7 +545,7 @@ class ReceiptApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -569,11 +560,11 @@ class ReceiptApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -594,7 +585,7 @@ class ReceiptApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -616,7 +607,7 @@ class ReceiptApi
      */
     public function verifyReceipt($body)
     {
-        list($response) = $this->verifyReceiptWithHttpInfo($body);
+        [$response] = $this->verifyReceiptWithHttpInfo($body);
         return $response;
     }
 
@@ -633,7 +624,7 @@ class ReceiptApi
      */
     public function verifyReceiptWithHttpInfo($body)
     {
-        $returnType = '\WooletClient\Model\ReceiptVerificationStatus';
+        $returnType = '\\' . \WooletClient\Model\ReceiptVerificationStatus::class;
         $request = $this->verifyReceiptRequest($body);
         try {
             $options = $this->createHttpClientOption();
@@ -666,7 +657,7 @@ class ReceiptApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -680,7 +671,7 @@ class ReceiptApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\ReceiptVerificationStatus',
+                        '\\' . \WooletClient\Model\ReceiptVerificationStatus::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -704,9 +695,7 @@ class ReceiptApi
     {
         return $this->verifyReceiptAsyncWithHttpInfo($body)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -722,7 +711,7 @@ class ReceiptApi
      */
     public function verifyReceiptAsyncWithHttpInfo($body)
     {
-        $returnType = '\WooletClient\Model\ReceiptVerificationStatus';
+        $returnType = '\\' . \WooletClient\Model\ReceiptVerificationStatus::class;
         $request = $this->verifyReceiptRequest($body);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -734,7 +723,7 @@ class ReceiptApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -743,7 +732,7 @@ class ReceiptApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -803,7 +792,7 @@ class ReceiptApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -818,11 +807,11 @@ class ReceiptApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -843,7 +832,7 @@ class ReceiptApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),

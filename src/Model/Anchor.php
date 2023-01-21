@@ -38,9 +38,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class Anchor implements ModelInterface, ArrayAccess
+class Anchor implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -246,10 +246,10 @@ class Anchor implements ModelInterface, ArrayAccess
         return self::$swaggerModelName;
     }
 
-    const STATUS_WAIT = 'WAIT';
-    const STATUS__NEW = 'NEW';
-    const STATUS_SENT = 'SENT';
-    const STATUS_CONFIRMED = 'CONFIRMED';
+    final const STATUS_WAIT = 'WAIT';
+    final const STATUS__NEW = 'NEW';
+    final const STATUS_SENT = 'SENT';
+    final const STATUS_CONFIRMED = 'CONFIRMED';
 
     /**
      * Gets allowable values of the enum
@@ -280,26 +280,26 @@ class Anchor implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
-        $this->container['created'] = isset($data['created']) ? $data['created'] : null;
-        $this->container['last_modified'] = isset($data['last_modified']) ? $data['last_modified'] : null;
-        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
-        $this->container['hash'] = isset($data['hash']) ? $data['hash'] : null;
-        $this->container['signed_hash'] = isset($data['signed_hash']) ? $data['signed_hash'] : null;
-        $this->container['signed_identity'] = isset($data['signed_identity']) ? $data['signed_identity'] : null;
-        $this->container['signed_issuer_domain'] = isset($data['signed_issuer_domain']) ? $data['signed_issuer_domain'] : null;
-        $this->container['pub_key'] = isset($data['pub_key']) ? $data['pub_key'] : null;
-        $this->container['signature'] = isset($data['signature']) ? $data['signature'] : null;
-        $this->container['identity_url'] = isset($data['identity_url']) ? $data['identity_url'] : null;
-        $this->container['public'] = isset($data['public']) ? $data['public'] : null;
-        $this->container['notify_by_email'] = isset($data['notify_by_email']) ? $data['notify_by_email'] : null;
-        $this->container['tags'] = isset($data['tags']) ? $data['tags'] : null;
-        $this->container['metadata'] = isset($data['metadata']) ? $data['metadata'] : null;
-        $this->container['callback_url'] = isset($data['callback_url']) ? $data['callback_url'] : null;
-        $this->container['status'] = isset($data['status']) ? $data['status'] : null;
-        $this->container['timestamp'] = isset($data['timestamp']) ? $data['timestamp'] : null;
-        $this->container['confirmations'] = isset($data['confirmations']) ? $data['confirmations'] : null;
-        $this->container['tx_id'] = isset($data['tx_id']) ? $data['tx_id'] : null;
+        $this->container['id'] = $data['id'] ?? null;
+        $this->container['created'] = $data['created'] ?? null;
+        $this->container['last_modified'] = $data['last_modified'] ?? null;
+        $this->container['name'] = $data['name'] ?? null;
+        $this->container['hash'] = $data['hash'] ?? null;
+        $this->container['signed_hash'] = $data['signed_hash'] ?? null;
+        $this->container['signed_identity'] = $data['signed_identity'] ?? null;
+        $this->container['signed_issuer_domain'] = $data['signed_issuer_domain'] ?? null;
+        $this->container['pub_key'] = $data['pub_key'] ?? null;
+        $this->container['signature'] = $data['signature'] ?? null;
+        $this->container['identity_url'] = $data['identity_url'] ?? null;
+        $this->container['public'] = $data['public'] ?? null;
+        $this->container['notify_by_email'] = $data['notify_by_email'] ?? null;
+        $this->container['tags'] = $data['tags'] ?? null;
+        $this->container['metadata'] = $data['metadata'] ?? null;
+        $this->container['callback_url'] = $data['callback_url'] ?? null;
+        $this->container['status'] = $data['status'] ?? null;
+        $this->container['timestamp'] = $data['timestamp'] ?? null;
+        $this->container['confirmations'] = $data['confirmations'] ?? null;
+        $this->container['tx_id'] = $data['tx_id'] ?? null;
     }
 
     /**
@@ -825,7 +825,7 @@ class Anchor implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -836,7 +836,7 @@ class Anchor implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -862,14 +862,14 @@ class Anchor implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

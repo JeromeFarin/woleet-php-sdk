@@ -62,11 +62,6 @@ class DomainApi
      */
     protected $headerSelector;
 
-    /**
-     * @param ClientInterface $client
-     * @param Configuration $config
-     * @param HeaderSelector $selector
-     */
     public function __construct(
         ClientInterface $client = null,
         Configuration $config = null,
@@ -99,7 +94,7 @@ class DomainApi
      */
     public function createDomainUser($body)
     {
-        list($response) = $this->createDomainUserWithHttpInfo($body);
+        [$response] = $this->createDomainUserWithHttpInfo($body);
         return $response;
     }
 
@@ -116,7 +111,7 @@ class DomainApi
      */
     public function createDomainUserWithHttpInfo($body)
     {
-        $returnType = '\WooletClient\Model\User';
+        $returnType = '\\' . \WooletClient\Model\User::class;
         $request = $this->createDomainUserRequest($body);
         try {
             $options = $this->createHttpClientOption();
@@ -149,7 +144,7 @@ class DomainApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -163,7 +158,7 @@ class DomainApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\User',
+                        '\\' . \WooletClient\Model\User::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -187,9 +182,7 @@ class DomainApi
     {
         return $this->createDomainUserAsyncWithHttpInfo($body)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -205,7 +198,7 @@ class DomainApi
      */
     public function createDomainUserAsyncWithHttpInfo($body)
     {
-        $returnType = '\WooletClient\Model\User';
+        $returnType = '\\' . \WooletClient\Model\User::class;
         $request = $this->createDomainUserRequest($body);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -217,7 +210,7 @@ class DomainApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -226,7 +219,7 @@ class DomainApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -286,7 +279,7 @@ class DomainApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -301,11 +294,11 @@ class DomainApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -326,7 +319,7 @@ class DomainApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -414,9 +407,7 @@ class DomainApi
     {
         return $this->deleteDomainUserAsyncWithHttpInfo($user_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -437,10 +428,8 @@ class DomainApi
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
             ->then(
-                function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
-                },
-                function ($exception) {
+                fn($response) => [null, $response->getStatusCode(), $response->getHeaders()],
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -505,7 +494,7 @@ class DomainApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -520,11 +509,11 @@ class DomainApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -545,7 +534,7 @@ class DomainApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'DELETE',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -567,7 +556,7 @@ class DomainApi
      */
     public function getDomainUser($user_id)
     {
-        list($response) = $this->getDomainUserWithHttpInfo($user_id);
+        [$response] = $this->getDomainUserWithHttpInfo($user_id);
         return $response;
     }
 
@@ -584,7 +573,7 @@ class DomainApi
      */
     public function getDomainUserWithHttpInfo($user_id)
     {
-        $returnType = '\WooletClient\Model\User';
+        $returnType = '\\' . \WooletClient\Model\User::class;
         $request = $this->getDomainUserRequest($user_id);
         try {
             $options = $this->createHttpClientOption();
@@ -617,7 +606,7 @@ class DomainApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -631,7 +620,7 @@ class DomainApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\User',
+                        '\\' . \WooletClient\Model\User::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -655,9 +644,7 @@ class DomainApi
     {
         return $this->getDomainUserAsyncWithHttpInfo($user_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -673,7 +660,7 @@ class DomainApi
      */
     public function getDomainUserAsyncWithHttpInfo($user_id)
     {
-        $returnType = '\WooletClient\Model\User';
+        $returnType = '\\' . \WooletClient\Model\User::class;
         $request = $this->getDomainUserRequest($user_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -685,7 +672,7 @@ class DomainApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -694,7 +681,7 @@ class DomainApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -759,7 +746,7 @@ class DomainApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -774,11 +761,11 @@ class DomainApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -799,7 +786,7 @@ class DomainApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -825,7 +812,7 @@ class DomainApi
      */
     public function searchDomainUsers($page = '0', $size = '20', $direction = 'ASC', $sort = 'created', $email = null)
     {
-        list($response) = $this->searchDomainUsersWithHttpInfo($page, $size, $direction, $sort, $email);
+        [$response] = $this->searchDomainUsersWithHttpInfo($page, $size, $direction, $sort, $email);
         return $response;
     }
 
@@ -846,7 +833,7 @@ class DomainApi
      */
     public function searchDomainUsersWithHttpInfo($page = '0', $size = '20', $direction = 'ASC', $sort = 'created', $email = null)
     {
-        $returnType = '\WooletClient\Model\Users';
+        $returnType = '\\' . \WooletClient\Model\Users::class;
         $request = $this->searchDomainUsersRequest($page, $size, $direction, $sort, $email);
         try {
             $options = $this->createHttpClientOption();
@@ -879,7 +866,7 @@ class DomainApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -893,7 +880,7 @@ class DomainApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\Users',
+                        '\\' . \WooletClient\Model\Users::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -921,9 +908,7 @@ class DomainApi
     {
         return $this->searchDomainUsersAsyncWithHttpInfo($page, $size, $direction, $sort, $email)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -943,7 +928,7 @@ class DomainApi
      */
     public function searchDomainUsersAsyncWithHttpInfo($page = '0', $size = '20', $direction = 'ASC', $sort = 'created', $email = null)
     {
-        $returnType = '\WooletClient\Model\Users';
+        $returnType = '\\' . \WooletClient\Model\Users::class;
         $request = $this->searchDomainUsersRequest($page, $size, $direction, $sort, $email);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -955,7 +940,7 @@ class DomainApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -964,7 +949,7 @@ class DomainApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1040,7 +1025,7 @@ class DomainApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1055,11 +1040,11 @@ class DomainApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1080,7 +1065,7 @@ class DomainApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1103,7 +1088,7 @@ class DomainApi
      */
     public function updateDomainUser($body, $user_id)
     {
-        list($response) = $this->updateDomainUserWithHttpInfo($body, $user_id);
+        [$response] = $this->updateDomainUserWithHttpInfo($body, $user_id);
         return $response;
     }
 
@@ -1121,7 +1106,7 @@ class DomainApi
      */
     public function updateDomainUserWithHttpInfo($body, $user_id)
     {
-        $returnType = '\WooletClient\Model\User';
+        $returnType = '\\' . \WooletClient\Model\User::class;
         $request = $this->updateDomainUserRequest($body, $user_id);
         try {
             $options = $this->createHttpClientOption();
@@ -1154,7 +1139,7 @@ class DomainApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -1168,7 +1153,7 @@ class DomainApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\User',
+                        '\\' . \WooletClient\Model\User::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1193,9 +1178,7 @@ class DomainApi
     {
         return $this->updateDomainUserAsyncWithHttpInfo($body, $user_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -1212,7 +1195,7 @@ class DomainApi
      */
     public function updateDomainUserAsyncWithHttpInfo($body, $user_id)
     {
-        $returnType = '\WooletClient\Model\User';
+        $returnType = '\\' . \WooletClient\Model\User::class;
         $request = $this->updateDomainUserRequest($body, $user_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1224,7 +1207,7 @@ class DomainApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -1233,7 +1216,7 @@ class DomainApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1308,7 +1291,7 @@ class DomainApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1323,11 +1306,11 @@ class DomainApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1348,7 +1331,7 @@ class DomainApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'PUT',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),

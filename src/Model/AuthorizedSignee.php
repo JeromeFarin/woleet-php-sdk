@@ -38,9 +38,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class AuthorizedSignee implements ModelInterface, ArrayAccess
+class AuthorizedSignee implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -236,9 +236,9 @@ class AuthorizedSignee implements ModelInterface, ArrayAccess
         return self::$swaggerModelName;
     }
 
-    const DEVICE_SERVER = 'SERVER';
-    const DEVICE_MOBILE = 'MOBILE';
-    const DEVICE_NANO = 'NANO';
+    final const DEVICE_SERVER = 'SERVER';
+    final const DEVICE_MOBILE = 'MOBILE';
+    final const DEVICE_NANO = 'NANO';
 
     /**
      * Gets allowable values of the enum
@@ -268,24 +268,24 @@ class AuthorizedSignee implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['common_name'] = isset($data['common_name']) ? $data['common_name'] : null;
-        $this->container['email'] = isset($data['email']) ? $data['email'] : null;
-        $this->container['country_calling_code'] = isset($data['country_calling_code']) ? $data['country_calling_code'] : null;
-        $this->container['phone'] = isset($data['phone']) ? $data['phone'] : null;
-        $this->container['requires_otp'] = isset($data['requires_otp']) ? $data['requires_otp'] : null;
-        $this->container['signs_face_to_face'] = isset($data['signs_face_to_face']) ? $data['signs_face_to_face'] : null;
-        $this->container['vars'] = isset($data['vars']) ? $data['vars'] : null;
-        $this->container['lang'] = isset($data['lang']) ? $data['lang'] : null;
-        $this->container['pub_key'] = isset($data['pub_key']) ? $data['pub_key'] : null;
-        $this->container['device'] = isset($data['device']) ? $data['device'] : null;
-        $this->container['identity_url'] = isset($data['identity_url']) ? $data['identity_url'] : null;
-        $this->container['feedback_subject'] = isset($data['feedback_subject']) ? $data['feedback_subject'] : null;
-        $this->container['feedback_message'] = isset($data['feedback_message']) ? $data['feedback_message'] : null;
-        $this->container['anchor_id'] = isset($data['anchor_id']) ? $data['anchor_id'] : null;
-        $this->container['signed_on'] = isset($data['signed_on']) ? $data['signed_on'] : null;
-        $this->container['audit_trail_id'] = isset($data['audit_trail_id']) ? $data['audit_trail_id'] : null;
-        $this->container['id'] = isset($data['id']) ? $data['id'] : null;
-        $this->container['otp'] = isset($data['otp']) ? $data['otp'] : null;
+        $this->container['common_name'] = $data['common_name'] ?? null;
+        $this->container['email'] = $data['email'] ?? null;
+        $this->container['country_calling_code'] = $data['country_calling_code'] ?? null;
+        $this->container['phone'] = $data['phone'] ?? null;
+        $this->container['requires_otp'] = $data['requires_otp'] ?? null;
+        $this->container['signs_face_to_face'] = $data['signs_face_to_face'] ?? null;
+        $this->container['vars'] = $data['vars'] ?? null;
+        $this->container['lang'] = $data['lang'] ?? null;
+        $this->container['pub_key'] = $data['pub_key'] ?? null;
+        $this->container['device'] = $data['device'] ?? null;
+        $this->container['identity_url'] = $data['identity_url'] ?? null;
+        $this->container['feedback_subject'] = $data['feedback_subject'] ?? null;
+        $this->container['feedback_message'] = $data['feedback_message'] ?? null;
+        $this->container['anchor_id'] = $data['anchor_id'] ?? null;
+        $this->container['signed_on'] = $data['signed_on'] ?? null;
+        $this->container['audit_trail_id'] = $data['audit_trail_id'] ?? null;
+        $this->container['id'] = $data['id'] ?? null;
+        $this->container['otp'] = $data['otp'] ?? null;
     }
 
     /**
@@ -762,7 +762,7 @@ class AuthorizedSignee implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -773,7 +773,7 @@ class AuthorizedSignee implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -799,14 +799,14 @@ class AuthorizedSignee implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

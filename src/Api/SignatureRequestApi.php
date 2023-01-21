@@ -62,11 +62,6 @@ class SignatureRequestApi
      */
     protected $headerSelector;
 
-    /**
-     * @param ClientInterface $client
-     * @param Configuration $config
-     * @param HeaderSelector $selector
-     */
     public function __construct(
         ClientInterface $client = null,
         Configuration $config = null,
@@ -99,7 +94,7 @@ class SignatureRequestApi
      */
     public function createSignatureRequest($body)
     {
-        list($response) = $this->createSignatureRequestWithHttpInfo($body);
+        [$response] = $this->createSignatureRequestWithHttpInfo($body);
         return $response;
     }
 
@@ -116,7 +111,7 @@ class SignatureRequestApi
      */
     public function createSignatureRequestWithHttpInfo($body)
     {
-        $returnType = '\WooletClient\Model\SignatureRequest';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequest::class;
         $request = $this->createSignatureRequestRequest($body);
         try {
             $options = $this->createHttpClientOption();
@@ -149,7 +144,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -163,7 +158,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequest',
+                        '\\' . \WooletClient\Model\SignatureRequest::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -187,9 +182,7 @@ class SignatureRequestApi
     {
         return $this->createSignatureRequestAsyncWithHttpInfo($body)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -205,7 +198,7 @@ class SignatureRequestApi
      */
     public function createSignatureRequestAsyncWithHttpInfo($body)
     {
-        $returnType = '\WooletClient\Model\SignatureRequest';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequest::class;
         $request = $this->createSignatureRequestRequest($body);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -217,7 +210,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -226,7 +219,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -286,7 +279,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -301,11 +294,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -326,7 +319,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -349,7 +342,7 @@ class SignatureRequestApi
      */
     public function delegateSignatureRequest($body, $request_id)
     {
-        list($response) = $this->delegateSignatureRequestWithHttpInfo($body, $request_id);
+        [$response] = $this->delegateSignatureRequestWithHttpInfo($body, $request_id);
         return $response;
     }
 
@@ -367,7 +360,7 @@ class SignatureRequestApi
      */
     public function delegateSignatureRequestWithHttpInfo($body, $request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequestSignResult';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequestSignResult::class;
         $request = $this->delegateSignatureRequestRequest($body, $request_id);
         try {
             $options = $this->createHttpClientOption();
@@ -400,7 +393,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -414,7 +407,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequestSignResult',
+                        '\\' . \WooletClient\Model\SignatureRequestSignResult::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -439,9 +432,7 @@ class SignatureRequestApi
     {
         return $this->delegateSignatureRequestAsyncWithHttpInfo($body, $request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -458,7 +449,7 @@ class SignatureRequestApi
      */
     public function delegateSignatureRequestAsyncWithHttpInfo($body, $request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequestSignResult';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequestSignResult::class;
         $request = $this->delegateSignatureRequestRequest($body, $request_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -470,7 +461,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -479,7 +470,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -554,7 +545,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -569,11 +560,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -594,7 +585,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -682,9 +673,7 @@ class SignatureRequestApi
     {
         return $this->deleteSignatureRequestAsyncWithHttpInfo($request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -705,10 +694,8 @@ class SignatureRequestApi
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
             ->then(
-                function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
-                },
-                function ($exception) {
+                fn($response) => [null, $response->getStatusCode(), $response->getHeaders()],
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -773,7 +760,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -788,11 +775,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -813,7 +800,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'DELETE',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -835,7 +822,7 @@ class SignatureRequestApi
      */
     public function downloadSignatureRequestFile($request_id)
     {
-        list($response) = $this->downloadSignatureRequestFileWithHttpInfo($request_id);
+        [$response] = $this->downloadSignatureRequestFileWithHttpInfo($request_id);
         return $response;
     }
 
@@ -885,7 +872,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -923,9 +910,7 @@ class SignatureRequestApi
     {
         return $this->downloadSignatureRequestFileAsyncWithHttpInfo($request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -953,7 +938,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -962,7 +947,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1027,7 +1012,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1042,11 +1027,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1067,7 +1052,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1090,7 +1075,7 @@ class SignatureRequestApi
      */
     public function getSignatureRequest($request_id, $signee_id = null)
     {
-        list($response) = $this->getSignatureRequestWithHttpInfo($request_id, $signee_id);
+        [$response] = $this->getSignatureRequestWithHttpInfo($request_id, $signee_id);
         return $response;
     }
 
@@ -1108,7 +1093,7 @@ class SignatureRequestApi
      */
     public function getSignatureRequestWithHttpInfo($request_id, $signee_id = null)
     {
-        $returnType = '\WooletClient\Model\SignatureRequest';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequest::class;
         $request = $this->getSignatureRequestRequest($request_id, $signee_id);
         try {
             $options = $this->createHttpClientOption();
@@ -1141,7 +1126,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -1155,7 +1140,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequest',
+                        '\\' . \WooletClient\Model\SignatureRequest::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1180,9 +1165,7 @@ class SignatureRequestApi
     {
         return $this->getSignatureRequestAsyncWithHttpInfo($request_id, $signee_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -1199,7 +1182,7 @@ class SignatureRequestApi
      */
     public function getSignatureRequestAsyncWithHttpInfo($request_id, $signee_id = null)
     {
-        $returnType = '\WooletClient\Model\SignatureRequest';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequest::class;
         $request = $this->getSignatureRequestRequest($request_id, $signee_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1211,7 +1194,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -1220,7 +1203,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1290,7 +1273,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1305,11 +1288,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1330,7 +1313,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1352,7 +1335,7 @@ class SignatureRequestApi
      */
     public function getSignatureRequestAttestation($request_id)
     {
-        list($response) = $this->getSignatureRequestAttestationWithHttpInfo($request_id);
+        [$response] = $this->getSignatureRequestAttestationWithHttpInfo($request_id);
         return $response;
     }
 
@@ -1369,7 +1352,7 @@ class SignatureRequestApi
      */
     public function getSignatureRequestAttestationWithHttpInfo($request_id)
     {
-        $returnType = '\WooletClient\Model\PdfFile';
+        $returnType = '\\' . \WooletClient\Model\PdfFile::class;
         $request = $this->getSignatureRequestAttestationRequest($request_id);
         try {
             $options = $this->createHttpClientOption();
@@ -1402,7 +1385,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -1416,7 +1399,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\PdfFile',
+                        '\\' . \WooletClient\Model\PdfFile::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1440,9 +1423,7 @@ class SignatureRequestApi
     {
         return $this->getSignatureRequestAttestationAsyncWithHttpInfo($request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -1458,7 +1439,7 @@ class SignatureRequestApi
      */
     public function getSignatureRequestAttestationAsyncWithHttpInfo($request_id)
     {
-        $returnType = '\WooletClient\Model\PdfFile';
+        $returnType = '\\' . \WooletClient\Model\PdfFile::class;
         $request = $this->getSignatureRequestAttestationRequest($request_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1470,7 +1451,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -1479,7 +1460,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1544,7 +1525,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1559,11 +1540,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1584,7 +1565,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1606,7 +1587,7 @@ class SignatureRequestApi
      */
     public function getSignatureRequestProofBundle($request_id)
     {
-        list($response) = $this->getSignatureRequestProofBundleWithHttpInfo($request_id);
+        [$response] = $this->getSignatureRequestProofBundleWithHttpInfo($request_id);
         return $response;
     }
 
@@ -1623,7 +1604,7 @@ class SignatureRequestApi
      */
     public function getSignatureRequestProofBundleWithHttpInfo($request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequestProofBundle';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequestProofBundle::class;
         $request = $this->getSignatureRequestProofBundleRequest($request_id);
         try {
             $options = $this->createHttpClientOption();
@@ -1656,7 +1637,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -1670,7 +1651,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequestProofBundle',
+                        '\\' . \WooletClient\Model\SignatureRequestProofBundle::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1678,7 +1659,7 @@ class SignatureRequestApi
                 case 202:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequestProofBundle',
+                        '\\' . \WooletClient\Model\SignatureRequestProofBundle::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1702,9 +1683,7 @@ class SignatureRequestApi
     {
         return $this->getSignatureRequestProofBundleAsyncWithHttpInfo($request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -1720,7 +1699,7 @@ class SignatureRequestApi
      */
     public function getSignatureRequestProofBundleAsyncWithHttpInfo($request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequestProofBundle';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequestProofBundle::class;
         $request = $this->getSignatureRequestProofBundleRequest($request_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1732,7 +1711,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -1741,7 +1720,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1806,7 +1785,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1821,11 +1800,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1846,7 +1825,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1937,9 +1916,7 @@ class SignatureRequestApi
     {
         return $this->reportSignatureRequestEventAsyncWithHttpInfo($body, $request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -1961,10 +1938,8 @@ class SignatureRequestApi
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
             ->then(
-                function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
-                },
-                function ($exception) {
+                fn($response) => [null, $response->getStatusCode(), $response->getHeaders()],
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -2039,7 +2014,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -2054,11 +2029,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -2079,7 +2054,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -2170,9 +2145,7 @@ class SignatureRequestApi
     {
         return $this->reportSignatureRequestFeedbackAsyncWithHttpInfo($body, $request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -2194,10 +2167,8 @@ class SignatureRequestApi
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
             ->then(
-                function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
-                },
-                function ($exception) {
+                fn($response) => [null, $response->getStatusCode(), $response->getHeaders()],
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -2272,7 +2243,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -2287,11 +2258,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -2312,7 +2283,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -2336,7 +2307,7 @@ class SignatureRequestApi
      */
     public function searchSignatureRequestIds($page = '0', $size = '20', $hash_to_sign = null)
     {
-        list($response) = $this->searchSignatureRequestIdsWithHttpInfo($page, $size, $hash_to_sign);
+        [$response] = $this->searchSignatureRequestIdsWithHttpInfo($page, $size, $hash_to_sign);
         return $response;
     }
 
@@ -2355,7 +2326,7 @@ class SignatureRequestApi
      */
     public function searchSignatureRequestIdsWithHttpInfo($page = '0', $size = '20', $hash_to_sign = null)
     {
-        $returnType = '\WooletClient\Model\SignatureRequestIds';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequestIds::class;
         $request = $this->searchSignatureRequestIdsRequest($page, $size, $hash_to_sign);
         try {
             $options = $this->createHttpClientOption();
@@ -2388,7 +2359,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -2402,7 +2373,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequestIds',
+                        '\\' . \WooletClient\Model\SignatureRequestIds::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2428,9 +2399,7 @@ class SignatureRequestApi
     {
         return $this->searchSignatureRequestIdsAsyncWithHttpInfo($page, $size, $hash_to_sign)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -2448,7 +2417,7 @@ class SignatureRequestApi
      */
     public function searchSignatureRequestIdsAsyncWithHttpInfo($page = '0', $size = '20', $hash_to_sign = null)
     {
-        $returnType = '\WooletClient\Model\SignatureRequestIds';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequestIds::class;
         $request = $this->searchSignatureRequestIdsRequest($page, $size, $hash_to_sign);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2460,7 +2429,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -2469,7 +2438,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -2535,7 +2504,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -2550,11 +2519,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -2575,7 +2544,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -2603,7 +2572,7 @@ class SignatureRequestApi
      */
     public function searchSignatureRequests($page = '0', $size = '20', $direction = 'ASC', $sort = 'created', $name = null, $hash_to_sign = null, $states = null)
     {
-        list($response) = $this->searchSignatureRequestsWithHttpInfo($page, $size, $direction, $sort, $name, $hash_to_sign, $states);
+        [$response] = $this->searchSignatureRequestsWithHttpInfo($page, $size, $direction, $sort, $name, $hash_to_sign, $states);
         return $response;
     }
 
@@ -2626,7 +2595,7 @@ class SignatureRequestApi
      */
     public function searchSignatureRequestsWithHttpInfo($page = '0', $size = '20', $direction = 'ASC', $sort = 'created', $name = null, $hash_to_sign = null, $states = null)
     {
-        $returnType = '\WooletClient\Model\SignatureRequests';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequests::class;
         $request = $this->searchSignatureRequestsRequest($page, $size, $direction, $sort, $name, $hash_to_sign, $states);
         try {
             $options = $this->createHttpClientOption();
@@ -2659,7 +2628,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -2673,7 +2642,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequests',
+                        '\\' . \WooletClient\Model\SignatureRequests::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2703,9 +2672,7 @@ class SignatureRequestApi
     {
         return $this->searchSignatureRequestsAsyncWithHttpInfo($page, $size, $direction, $sort, $name, $hash_to_sign, $states)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -2727,7 +2694,7 @@ class SignatureRequestApi
      */
     public function searchSignatureRequestsAsyncWithHttpInfo($page = '0', $size = '20', $direction = 'ASC', $sort = 'created', $name = null, $hash_to_sign = null, $states = null)
     {
-        $returnType = '\WooletClient\Model\SignatureRequests';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequests::class;
         $request = $this->searchSignatureRequestsRequest($page, $size, $direction, $sort, $name, $hash_to_sign, $states);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -2739,7 +2706,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -2748,7 +2715,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -2837,7 +2804,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -2852,11 +2819,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -2877,7 +2844,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -2968,9 +2935,7 @@ class SignatureRequestApi
     {
         return $this->sendSignatureRequestOTPAsyncWithHttpInfo($request_id, $signee_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -2992,10 +2957,8 @@ class SignatureRequestApi
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
             ->then(
-                function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
-                },
-                function ($exception) {
+                fn($response) => [null, $response->getStatusCode(), $response->getHeaders()],
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -3075,7 +3038,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -3090,11 +3053,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -3115,7 +3078,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -3209,9 +3172,7 @@ class SignatureRequestApi
     {
         return $this->sendSignatureRequestReminderAsyncWithHttpInfo($body, $request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -3234,10 +3195,8 @@ class SignatureRequestApi
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
             ->then(
-                function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
-                },
-                function ($exception) {
+                fn($response) => [null, $response->getStatusCode(), $response->getHeaders()],
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -3313,7 +3272,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -3328,11 +3287,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -3353,7 +3312,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -3376,7 +3335,7 @@ class SignatureRequestApi
      */
     public function signSignatureRequest($body, $request_id)
     {
-        list($response) = $this->signSignatureRequestWithHttpInfo($body, $request_id);
+        [$response] = $this->signSignatureRequestWithHttpInfo($body, $request_id);
         return $response;
     }
 
@@ -3394,7 +3353,7 @@ class SignatureRequestApi
      */
     public function signSignatureRequestWithHttpInfo($body, $request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequestSignResult';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequestSignResult::class;
         $request = $this->signSignatureRequestRequest($body, $request_id);
         try {
             $options = $this->createHttpClientOption();
@@ -3427,7 +3386,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -3441,7 +3400,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequestSignResult',
+                        '\\' . \WooletClient\Model\SignatureRequestSignResult::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3466,9 +3425,7 @@ class SignatureRequestApi
     {
         return $this->signSignatureRequestAsyncWithHttpInfo($body, $request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -3485,7 +3442,7 @@ class SignatureRequestApi
      */
     public function signSignatureRequestAsyncWithHttpInfo($body, $request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequestSignResult';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequestSignResult::class;
         $request = $this->signSignatureRequestRequest($body, $request_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -3497,7 +3454,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -3506,7 +3463,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -3581,7 +3538,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -3596,11 +3553,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -3621,7 +3578,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -3644,7 +3601,7 @@ class SignatureRequestApi
      */
     public function transitionSignatureRequest($body, $request_id)
     {
-        list($response) = $this->transitionSignatureRequestWithHttpInfo($body, $request_id);
+        [$response] = $this->transitionSignatureRequestWithHttpInfo($body, $request_id);
         return $response;
     }
 
@@ -3662,7 +3619,7 @@ class SignatureRequestApi
      */
     public function transitionSignatureRequestWithHttpInfo($body, $request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequest';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequest::class;
         $request = $this->transitionSignatureRequestRequest($body, $request_id);
         try {
             $options = $this->createHttpClientOption();
@@ -3695,7 +3652,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -3709,7 +3666,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequest',
+                        '\\' . \WooletClient\Model\SignatureRequest::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -3734,9 +3691,7 @@ class SignatureRequestApi
     {
         return $this->transitionSignatureRequestAsyncWithHttpInfo($body, $request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -3753,7 +3708,7 @@ class SignatureRequestApi
      */
     public function transitionSignatureRequestAsyncWithHttpInfo($body, $request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequest';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequest::class;
         $request = $this->transitionSignatureRequestRequest($body, $request_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -3765,7 +3720,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -3774,7 +3729,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -3849,7 +3804,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -3864,11 +3819,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -3889,7 +3844,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -3912,7 +3867,7 @@ class SignatureRequestApi
      */
     public function updateSignatureRequest($body, $request_id)
     {
-        list($response) = $this->updateSignatureRequestWithHttpInfo($body, $request_id);
+        [$response] = $this->updateSignatureRequestWithHttpInfo($body, $request_id);
         return $response;
     }
 
@@ -3930,7 +3885,7 @@ class SignatureRequestApi
      */
     public function updateSignatureRequestWithHttpInfo($body, $request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequest';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequest::class;
         $request = $this->updateSignatureRequestRequest($body, $request_id);
         try {
             $options = $this->createHttpClientOption();
@@ -3963,7 +3918,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -3977,7 +3932,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequest',
+                        '\\' . \WooletClient\Model\SignatureRequest::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4002,9 +3957,7 @@ class SignatureRequestApi
     {
         return $this->updateSignatureRequestAsyncWithHttpInfo($body, $request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -4021,7 +3974,7 @@ class SignatureRequestApi
      */
     public function updateSignatureRequestAsyncWithHttpInfo($body, $request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequest';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequest::class;
         $request = $this->updateSignatureRequestRequest($body, $request_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -4033,7 +3986,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -4042,7 +3995,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -4117,7 +4070,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -4132,11 +4085,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -4157,7 +4110,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'PUT',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -4180,7 +4133,7 @@ class SignatureRequestApi
      */
     public function uploadSignatureRequestFile($file, $request_id)
     {
-        list($response) = $this->uploadSignatureRequestFileWithHttpInfo($file, $request_id);
+        [$response] = $this->uploadSignatureRequestFileWithHttpInfo($file, $request_id);
         return $response;
     }
 
@@ -4198,7 +4151,7 @@ class SignatureRequestApi
      */
     public function uploadSignatureRequestFileWithHttpInfo($file, $request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequest';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequest::class;
         $request = $this->uploadSignatureRequestFileRequest($file, $request_id);
         try {
             $options = $this->createHttpClientOption();
@@ -4231,7 +4184,7 @@ class SignatureRequestApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -4245,7 +4198,7 @@ class SignatureRequestApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\SignatureRequest',
+                        '\\' . \WooletClient\Model\SignatureRequest::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -4270,9 +4223,7 @@ class SignatureRequestApi
     {
         return $this->uploadSignatureRequestFileAsyncWithHttpInfo($file, $request_id)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -4289,7 +4240,7 @@ class SignatureRequestApi
      */
     public function uploadSignatureRequestFileAsyncWithHttpInfo($file, $request_id)
     {
-        $returnType = '\WooletClient\Model\SignatureRequest';
+        $returnType = '\\' . \WooletClient\Model\SignatureRequest::class;
         $request = $this->uploadSignatureRequestFileRequest($file, $request_id);
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -4301,7 +4252,7 @@ class SignatureRequestApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -4310,7 +4261,7 @@ class SignatureRequestApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -4367,7 +4318,7 @@ class SignatureRequestApi
         // form params
         if ($file !== null) {
             $multipart = true;
-            $formParams['file'] = \GuzzleHttp\Psr7\try_fopen(ObjectSerializer::toFormValue($file), 'rb');
+            $formParams['file'] = \GuzzleHttp\Psr7\Utils::tryFopen(ObjectSerializer::toFormValue($file), 'rb');
         }
         // body params
         $_tempBody = null;
@@ -4387,7 +4338,7 @@ class SignatureRequestApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -4402,11 +4353,11 @@ class SignatureRequestApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -4427,7 +4378,7 @@ class SignatureRequestApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'POST',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),

@@ -39,9 +39,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class Identity implements ModelInterface, ArrayAccess
+class Identity implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -188,11 +188,11 @@ class Identity implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['common_name'] = isset($data['common_name']) ? $data['common_name'] : null;
-        $this->container['organization'] = isset($data['organization']) ? $data['organization'] : null;
-        $this->container['organizational_unit'] = isset($data['organizational_unit']) ? $data['organizational_unit'] : null;
-        $this->container['locality'] = isset($data['locality']) ? $data['locality'] : null;
-        $this->container['country'] = isset($data['country']) ? $data['country'] : null;
+        $this->container['common_name'] = $data['common_name'] ?? null;
+        $this->container['organization'] = $data['organization'] ?? null;
+        $this->container['organizational_unit'] = $data['organizational_unit'] ?? null;
+        $this->container['locality'] = $data['locality'] ?? null;
+        $this->container['country'] = $data['country'] ?? null;
     }
 
     /**
@@ -357,7 +357,7 @@ class Identity implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -368,7 +368,7 @@ class Identity implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -394,14 +394,14 @@ class Identity implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

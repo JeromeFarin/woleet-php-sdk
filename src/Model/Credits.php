@@ -38,9 +38,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class Credits implements ModelInterface, ArrayAccess
+class Credits implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -177,9 +177,9 @@ class Credits implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['credits'] = isset($data['credits']) ? $data['credits'] : null;
-        $this->container['sign_credits'] = isset($data['sign_credits']) ? $data['sign_credits'] : null;
-        $this->container['signature_request_credits'] = isset($data['signature_request_credits']) ? $data['signature_request_credits'] : null;
+        $this->container['credits'] = $data['credits'] ?? null;
+        $this->container['sign_credits'] = $data['sign_credits'] ?? null;
+        $this->container['signature_request_credits'] = $data['signature_request_credits'] ?? null;
     }
 
     /**
@@ -295,7 +295,7 @@ class Credits implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -306,7 +306,7 @@ class Credits implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -332,14 +332,14 @@ class Credits implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

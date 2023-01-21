@@ -39,9 +39,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class Key implements ModelInterface, ArrayAccess
+class Key implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -172,9 +172,9 @@ class Key implements ModelInterface, ArrayAccess
         return self::$swaggerModelName;
     }
 
-    const STATUS_VALID = 'valid';
-    const STATUS_EXPIRED = 'expired';
-    const STATUS_REVOKED = 'revoked';
+    final const STATUS_VALID = 'valid';
+    final const STATUS_EXPIRED = 'expired';
+    final const STATUS_REVOKED = 'revoked';
 
     /**
      * Gets allowable values of the enum
@@ -204,11 +204,11 @@ class Key implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['name'] = isset($data['name']) ? $data['name'] : null;
-        $this->container['pub_key'] = isset($data['pub_key']) ? $data['pub_key'] : null;
-        $this->container['status'] = isset($data['status']) ? $data['status'] : null;
-        $this->container['expiration'] = isset($data['expiration']) ? $data['expiration'] : null;
-        $this->container['revoked_at'] = isset($data['revoked_at']) ? $data['revoked_at'] : null;
+        $this->container['name'] = $data['name'] ?? null;
+        $this->container['pub_key'] = $data['pub_key'] ?? null;
+        $this->container['status'] = $data['status'] ?? null;
+        $this->container['expiration'] = $data['expiration'] ?? null;
+        $this->container['revoked_at'] = $data['revoked_at'] ?? null;
     }
 
     /**
@@ -386,7 +386,7 @@ class Key implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -397,7 +397,7 @@ class Key implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -423,14 +423,14 @@ class Key implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

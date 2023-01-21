@@ -38,9 +38,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class SignatureRequestSign implements ModelInterface, ArrayAccess
+class SignatureRequestSign implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -186,9 +186,9 @@ class SignatureRequestSign implements ModelInterface, ArrayAccess
         return self::$swaggerModelName;
     }
 
-    const DEVICE_SERVER = 'SERVER';
-    const DEVICE_MOBILE = 'MOBILE';
-    const DEVICE_NANO = 'NANO';
+    final const DEVICE_SERVER = 'SERVER';
+    final const DEVICE_MOBILE = 'MOBILE';
+    final const DEVICE_NANO = 'NANO';
 
     /**
      * Gets allowable values of the enum
@@ -218,14 +218,14 @@ class SignatureRequestSign implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['signature'] = isset($data['signature']) ? $data['signature'] : null;
-        $this->container['pub_key'] = isset($data['pub_key']) ? $data['pub_key'] : null;
-        $this->container['signed_identity'] = isset($data['signed_identity']) ? $data['signed_identity'] : null;
-        $this->container['signed_issuer_domain'] = isset($data['signed_issuer_domain']) ? $data['signed_issuer_domain'] : null;
-        $this->container['identity_url'] = isset($data['identity_url']) ? $data['identity_url'] : null;
-        $this->container['device'] = isset($data['device']) ? $data['device'] : null;
-        $this->container['signee_id'] = isset($data['signee_id']) ? $data['signee_id'] : null;
-        $this->container['otp'] = isset($data['otp']) ? $data['otp'] : null;
+        $this->container['signature'] = $data['signature'] ?? null;
+        $this->container['pub_key'] = $data['pub_key'] ?? null;
+        $this->container['signed_identity'] = $data['signed_identity'] ?? null;
+        $this->container['signed_issuer_domain'] = $data['signed_issuer_domain'] ?? null;
+        $this->container['identity_url'] = $data['identity_url'] ?? null;
+        $this->container['device'] = $data['device'] ?? null;
+        $this->container['signee_id'] = $data['signee_id'] ?? null;
+        $this->container['otp'] = $data['otp'] ?? null;
     }
 
     /**
@@ -478,7 +478,7 @@ class SignatureRequestSign implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -489,7 +489,7 @@ class SignatureRequestSign implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -515,14 +515,14 @@ class SignatureRequestSign implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

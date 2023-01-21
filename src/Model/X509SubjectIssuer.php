@@ -38,9 +38,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class X509SubjectIssuer implements ModelInterface, ArrayAccess
+class X509SubjectIssuer implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -55,8 +55,8 @@ class X509SubjectIssuer implements ModelInterface, ArrayAccess
      * @var string[]
      */
     protected static $swaggerTypes = [
-        'subject' => '\WooletClient\Model\X500Name',
-        'issuer' => '\WooletClient\Model\X500Name'];
+        'subject' => '\\' . \WooletClient\Model\X500Name::class,
+        'issuer' => '\\' . \WooletClient\Model\X500Name::class];
 
     /**
      * Array of property to format mappings. Used for (de)serialization
@@ -172,8 +172,8 @@ class X509SubjectIssuer implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['subject'] = isset($data['subject']) ? $data['subject'] : null;
-        $this->container['issuer'] = isset($data['issuer']) ? $data['issuer'] : null;
+        $this->container['subject'] = $data['subject'] ?? null;
+        $this->container['issuer'] = $data['issuer'] ?? null;
     }
 
     /**
@@ -266,7 +266,7 @@ class X509SubjectIssuer implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -277,7 +277,7 @@ class X509SubjectIssuer implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -303,14 +303,14 @@ class X509SubjectIssuer implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

@@ -43,13 +43,13 @@ class SignatureRequestState
     /**
      * Possible values of this enum
      */
-    const DRAFT = 'DRAFT';
-    const PENDING = 'PENDING';
-    const IN_PROGRESS = 'IN_PROGRESS';
-    const COMPLETED = 'COMPLETED';
-    const CLOSED = 'CLOSED';
-    const CANCELED = 'CANCELED';
-    const EXPIRED = 'EXPIRED';
+    final const DRAFT = 'DRAFT';
+    final const PENDING = 'PENDING';
+    final const IN_PROGRESS = 'IN_PROGRESS';
+    final const COMPLETED = 'COMPLETED';
+    final const CLOSED = 'CLOSED';
+    final const CANCELED = 'CANCELED';
+    final const EXPIRED = 'EXPIRED';
 
     /**
      * Gets allowable values of the enum

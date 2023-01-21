@@ -62,11 +62,6 @@ class UserApi
      */
     protected $headerSelector;
 
-    /**
-     * @param ClientInterface $client
-     * @param Configuration $config
-     * @param HeaderSelector $selector
-     */
     public function __construct(
         ClientInterface $client = null,
         Configuration $config = null,
@@ -98,7 +93,7 @@ class UserApi
      */
     public function getCallbackSecret()
     {
-        list($response) = $this->getCallbackSecretWithHttpInfo();
+        [$response] = $this->getCallbackSecretWithHttpInfo();
         return $response;
     }
 
@@ -114,7 +109,7 @@ class UserApi
      */
     public function getCallbackSecretWithHttpInfo()
     {
-        $returnType = '\WooletClient\Model\CallbackSecret';
+        $returnType = '\\' . \WooletClient\Model\CallbackSecret::class;
         $request = $this->getCallbackSecretRequest();
         try {
             $options = $this->createHttpClientOption();
@@ -147,7 +142,7 @@ class UserApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -161,7 +156,7 @@ class UserApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\CallbackSecret',
+                        '\\' . \WooletClient\Model\CallbackSecret::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -184,9 +179,7 @@ class UserApi
     {
         return $this->getCallbackSecretAsyncWithHttpInfo()
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -201,7 +194,7 @@ class UserApi
      */
     public function getCallbackSecretAsyncWithHttpInfo()
     {
-        $returnType = '\WooletClient\Model\CallbackSecret';
+        $returnType = '\\' . \WooletClient\Model\CallbackSecret::class;
         $request = $this->getCallbackSecretRequest();
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -213,7 +206,7 @@ class UserApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -222,7 +215,7 @@ class UserApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -273,7 +266,7 @@ class UserApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -288,11 +281,11 @@ class UserApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -313,7 +306,7 @@ class UserApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -334,7 +327,7 @@ class UserApi
      */
     public function getCredits()
     {
-        list($response) = $this->getCreditsWithHttpInfo();
+        [$response] = $this->getCreditsWithHttpInfo();
         return $response;
     }
 
@@ -350,7 +343,7 @@ class UserApi
      */
     public function getCreditsWithHttpInfo()
     {
-        $returnType = '\WooletClient\Model\Credits';
+        $returnType = '\\' . \WooletClient\Model\Credits::class;
         $request = $this->getCreditsRequest();
         try {
             $options = $this->createHttpClientOption();
@@ -383,7 +376,7 @@ class UserApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -397,7 +390,7 @@ class UserApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\Credits',
+                        '\\' . \WooletClient\Model\Credits::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -420,9 +413,7 @@ class UserApi
     {
         return $this->getCreditsAsyncWithHttpInfo()
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -437,7 +428,7 @@ class UserApi
      */
     public function getCreditsAsyncWithHttpInfo()
     {
-        $returnType = '\WooletClient\Model\Credits';
+        $returnType = '\\' . \WooletClient\Model\Credits::class;
         $request = $this->getCreditsRequest();
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -449,7 +440,7 @@ class UserApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -458,7 +449,7 @@ class UserApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -509,7 +500,7 @@ class UserApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -524,11 +515,11 @@ class UserApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -549,7 +540,7 @@ class UserApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -570,7 +561,7 @@ class UserApi
      */
     public function getTokens()
     {
-        list($response) = $this->getTokensWithHttpInfo();
+        [$response] = $this->getTokensWithHttpInfo();
         return $response;
     }
 
@@ -586,7 +577,7 @@ class UserApi
      */
     public function getTokensWithHttpInfo()
     {
-        $returnType = '\WooletClient\Model\Tokens';
+        $returnType = '\\' . \WooletClient\Model\Tokens::class;
         $request = $this->getTokensRequest();
         try {
             $options = $this->createHttpClientOption();
@@ -619,7 +610,7 @@ class UserApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -633,7 +624,7 @@ class UserApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\Tokens',
+                        '\\' . \WooletClient\Model\Tokens::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -656,9 +647,7 @@ class UserApi
     {
         return $this->getTokensAsyncWithHttpInfo()
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -673,7 +662,7 @@ class UserApi
      */
     public function getTokensAsyncWithHttpInfo()
     {
-        $returnType = '\WooletClient\Model\Tokens';
+        $returnType = '\\' . \WooletClient\Model\Tokens::class;
         $request = $this->getTokensRequest();
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -685,7 +674,7 @@ class UserApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -694,7 +683,7 @@ class UserApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -745,7 +734,7 @@ class UserApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -760,11 +749,11 @@ class UserApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -785,7 +774,7 @@ class UserApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'GET',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -873,9 +862,7 @@ class UserApi
     {
         return $this->putTokensAsyncWithHttpInfo($body)
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -896,10 +883,8 @@ class UserApi
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
             ->then(
-                function ($response) use ($returnType) {
-                    return [null, $response->getStatusCode(), $response->getHeaders()];
-                },
-                function ($exception) {
+                fn($response) => [null, $response->getStatusCode(), $response->getHeaders()],
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -959,7 +944,7 @@ class UserApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -974,11 +959,11 @@ class UserApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -999,7 +984,7 @@ class UserApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'PUT',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
@@ -1020,7 +1005,7 @@ class UserApi
      */
     public function updateCallbackSecret()
     {
-        list($response) = $this->updateCallbackSecretWithHttpInfo();
+        [$response] = $this->updateCallbackSecretWithHttpInfo();
         return $response;
     }
 
@@ -1036,7 +1021,7 @@ class UserApi
      */
     public function updateCallbackSecretWithHttpInfo()
     {
-        $returnType = '\WooletClient\Model\CallbackSecret';
+        $returnType = '\\' . \WooletClient\Model\CallbackSecret::class;
         $request = $this->updateCallbackSecretRequest();
         try {
             $options = $this->createHttpClientOption();
@@ -1069,7 +1054,7 @@ class UserApi
             } else {
                 $content = $responseBody->getContents();
                 if (!in_array($returnType, ['string', 'integer', 'bool'])) {
-                    $content = json_decode($content);
+                    $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                 }
             }
             return [
@@ -1083,7 +1068,7 @@ class UserApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\WooletClient\Model\CallbackSecret',
+                        '\\' . \WooletClient\Model\CallbackSecret::class,
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -1106,9 +1091,7 @@ class UserApi
     {
         return $this->updateCallbackSecretAsyncWithHttpInfo()
             ->then(
-                function ($response) {
-                    return $response[0];
-                }
+                fn($response) => $response[0]
             );
     }
 
@@ -1123,7 +1106,7 @@ class UserApi
      */
     public function updateCallbackSecretAsyncWithHttpInfo()
     {
-        $returnType = '\WooletClient\Model\CallbackSecret';
+        $returnType = '\\' . \WooletClient\Model\CallbackSecret::class;
         $request = $this->updateCallbackSecretRequest();
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -1135,7 +1118,7 @@ class UserApi
                     } else {
                         $content = $responseBody->getContents();
                         if ($returnType !== 'string') {
-                            $content = json_decode($content);
+                            $content = json_decode($content, null, 512, JSON_THROW_ON_ERROR);
                         }
                     }
                     return [
@@ -1144,7 +1127,7 @@ class UserApi
                         $response->getHeaders()
                     ];
                 },
-                function ($exception) {
+                function ($exception): never {
                     $response = $exception->getResponse();
                     $statusCode = $response->getStatusCode();
                     throw new ApiException(
@@ -1195,7 +1178,7 @@ class UserApi
             $httpBody = $_tempBody;
             // \stdClass has no __toString(), so we should encode it manually
             if ($httpBody instanceof \stdClass && $headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($httpBody);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($httpBody);
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {
@@ -1210,11 +1193,11 @@ class UserApi
                 $httpBody = new MultipartStream($multipartContents);
 
             } elseif ($headers['Content-Type'] === 'application/json') {
-                $httpBody = \GuzzleHttp\json_encode($formParams);
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
 
             } else {
                 // for HTTP post (form)
-                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+                $httpBody = \GuzzleHttp\Psr7\Query::build($formParams);
             }
         }
         // this endpoint requires HTTP basic authentication
@@ -1235,7 +1218,7 @@ class UserApi
             $headerParams,
             $headers
         );
-        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        $query = \GuzzleHttp\Psr7\Query::build($queryParams);
         return new Request(
             'PUT',
             $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),

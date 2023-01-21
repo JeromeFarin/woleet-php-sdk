@@ -38,9 +38,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class IdentityVerificationStatus implements ModelInterface, ArrayAccess
+class IdentityVerificationStatus implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -58,10 +58,10 @@ class IdentityVerificationStatus implements ModelInterface, ArrayAccess
         'code' => 'string',
         'text' => 'string',
         'certificates' => '\WooletClient\Model\X509SubjectIssuer[]',
-        'identity' => '\WooletClient\Model\Identity',
-        'signed_identity' => '\WooletClient\Model\Identity',
+        'identity' => '\\' . \WooletClient\Model\Identity::class,
+        'signed_identity' => '\\' . \WooletClient\Model\Identity::class,
         'signed_issuer_domain' => 'string',
-        'key' => '\WooletClient\Model\Key'];
+        'key' => '\\' . \WooletClient\Model\Key::class];
 
     /**
      * Array of property to format mappings. Used for (de)serialization
@@ -181,12 +181,12 @@ class IdentityVerificationStatus implements ModelInterface, ArrayAccess
         return self::$swaggerModelName;
     }
 
-    const CODE_VERIFIED = 'VERIFIED';
-    const CODE_HTTP_ERROR = 'HTTP_ERROR';
-    const CODE_IDENTITY_NOT_FOUND = 'IDENTITY_NOT_FOUND';
-    const CODE_IDENTITY_MISMATCH = 'IDENTITY_MISMATCH';
-    const CODE_INVALID_SIGNATURE = 'INVALID_SIGNATURE';
-    const CODE_DEPRECATED_KEY = 'DEPRECATED_KEY';
+    final const CODE_VERIFIED = 'VERIFIED';
+    final const CODE_HTTP_ERROR = 'HTTP_ERROR';
+    final const CODE_IDENTITY_NOT_FOUND = 'IDENTITY_NOT_FOUND';
+    final const CODE_IDENTITY_MISMATCH = 'IDENTITY_MISMATCH';
+    final const CODE_INVALID_SIGNATURE = 'INVALID_SIGNATURE';
+    final const CODE_DEPRECATED_KEY = 'DEPRECATED_KEY';
 
     /**
      * Gets allowable values of the enum
@@ -219,13 +219,13 @@ class IdentityVerificationStatus implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['code'] = isset($data['code']) ? $data['code'] : null;
-        $this->container['text'] = isset($data['text']) ? $data['text'] : null;
-        $this->container['certificates'] = isset($data['certificates']) ? $data['certificates'] : null;
-        $this->container['identity'] = isset($data['identity']) ? $data['identity'] : null;
-        $this->container['signed_identity'] = isset($data['signed_identity']) ? $data['signed_identity'] : null;
-        $this->container['signed_issuer_domain'] = isset($data['signed_issuer_domain']) ? $data['signed_issuer_domain'] : null;
-        $this->container['key'] = isset($data['key']) ? $data['key'] : null;
+        $this->container['code'] = $data['code'] ?? null;
+        $this->container['text'] = $data['text'] ?? null;
+        $this->container['certificates'] = $data['certificates'] ?? null;
+        $this->container['identity'] = $data['identity'] ?? null;
+        $this->container['signed_identity'] = $data['signed_identity'] ?? null;
+        $this->container['signed_issuer_domain'] = $data['signed_issuer_domain'] ?? null;
+        $this->container['key'] = $data['key'] ?? null;
     }
 
     /**
@@ -449,7 +449,7 @@ class IdentityVerificationStatus implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -460,7 +460,7 @@ class IdentityVerificationStatus implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -486,14 +486,14 @@ class IdentityVerificationStatus implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

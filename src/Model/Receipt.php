@@ -39,9 +39,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class Receipt implements ModelInterface, ArrayAccess
+class Receipt implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -62,7 +62,7 @@ class Receipt implements ModelInterface, ArrayAccess
         'proof' => '\WooletClient\Model\ReceiptProofNode[]',
         'anchors' => '\WooletClient\Model\ReceiptAnchorsNode[]',
         'partial' => 'bool',
-        'signature' => '\WooletClient\Model\ReceiptSignature'];
+        'signature' => '\\' . \WooletClient\Model\ReceiptSignature::class];
 
     /**
      * Array of property to format mappings. Used for (de)serialization
@@ -198,13 +198,13 @@ class Receipt implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['target_hash'] = isset($data['target_hash']) ? $data['target_hash'] : null;
-        $this->container['type'] = isset($data['type']) ? $data['type'] : null;
-        $this->container['merkle_root'] = isset($data['merkle_root']) ? $data['merkle_root'] : null;
-        $this->container['proof'] = isset($data['proof']) ? $data['proof'] : null;
-        $this->container['anchors'] = isset($data['anchors']) ? $data['anchors'] : null;
-        $this->container['partial'] = isset($data['partial']) ? $data['partial'] : null;
-        $this->container['signature'] = isset($data['signature']) ? $data['signature'] : null;
+        $this->container['target_hash'] = $data['target_hash'] ?? null;
+        $this->container['type'] = $data['type'] ?? null;
+        $this->container['merkle_root'] = $data['merkle_root'] ?? null;
+        $this->container['proof'] = $data['proof'] ?? null;
+        $this->container['anchors'] = $data['anchors'] ?? null;
+        $this->container['partial'] = $data['partial'] ?? null;
+        $this->container['signature'] = $data['signature'] ?? null;
     }
 
     /**
@@ -412,7 +412,7 @@ class Receipt implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -423,7 +423,7 @@ class Receipt implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -449,14 +449,14 @@ class Receipt implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

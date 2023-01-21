@@ -39,9 +39,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class SignatureRequestProofBundle implements ModelInterface, ArrayAccess
+class SignatureRequestProofBundle implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -57,7 +57,7 @@ class SignatureRequestProofBundle implements ModelInterface, ArrayAccess
      */
     protected static $swaggerTypes = [
         'signature_receipts' => '\WooletClient\Model\Receipt[]',
-        'audit_trail_receipt' => '\WooletClient\Model\Receipt',
+        'audit_trail_receipt' => '\\' . \WooletClient\Model\Receipt::class,
         'audit_trail_data' => 'string',
         'complete' => 'bool'];
 
@@ -183,10 +183,10 @@ class SignatureRequestProofBundle implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['signature_receipts'] = isset($data['signature_receipts']) ? $data['signature_receipts'] : null;
-        $this->container['audit_trail_receipt'] = isset($data['audit_trail_receipt']) ? $data['audit_trail_receipt'] : null;
-        $this->container['audit_trail_data'] = isset($data['audit_trail_data']) ? $data['audit_trail_data'] : null;
-        $this->container['complete'] = isset($data['complete']) ? $data['complete'] : null;
+        $this->container['signature_receipts'] = $data['signature_receipts'] ?? null;
+        $this->container['audit_trail_receipt'] = $data['audit_trail_receipt'] ?? null;
+        $this->container['audit_trail_data'] = $data['audit_trail_data'] ?? null;
+        $this->container['complete'] = $data['complete'] ?? null;
     }
 
     /**
@@ -325,7 +325,7 @@ class SignatureRequestProofBundle implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -336,7 +336,7 @@ class SignatureRequestProofBundle implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -362,14 +362,14 @@ class SignatureRequestProofBundle implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

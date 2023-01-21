@@ -39,9 +39,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class ReceiptSignature implements ModelInterface, ArrayAccess
+class ReceiptSignature implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -193,12 +193,12 @@ class ReceiptSignature implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['signed_hash'] = isset($data['signed_hash']) ? $data['signed_hash'] : null;
-        $this->container['signed_identity'] = isset($data['signed_identity']) ? $data['signed_identity'] : null;
-        $this->container['signed_issuer_domain'] = isset($data['signed_issuer_domain']) ? $data['signed_issuer_domain'] : null;
-        $this->container['pub_key'] = isset($data['pub_key']) ? $data['pub_key'] : null;
-        $this->container['signature'] = isset($data['signature']) ? $data['signature'] : null;
-        $this->container['identity_url'] = isset($data['identity_url']) ? $data['identity_url'] : null;
+        $this->container['signed_hash'] = $data['signed_hash'] ?? null;
+        $this->container['signed_identity'] = $data['signed_identity'] ?? null;
+        $this->container['signed_issuer_domain'] = $data['signed_issuer_domain'] ?? null;
+        $this->container['pub_key'] = $data['pub_key'] ?? null;
+        $this->container['signature'] = $data['signature'] ?? null;
+        $this->container['identity_url'] = $data['identity_url'] ?? null;
     }
 
     /**
@@ -383,7 +383,7 @@ class ReceiptSignature implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -394,7 +394,7 @@ class ReceiptSignature implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -420,14 +420,14 @@ class ReceiptSignature implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }

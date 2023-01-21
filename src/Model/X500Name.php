@@ -39,9 +39,9 @@ use \WooletClient\ObjectSerializer;
  * @author   Swagger Codegen team
  * @link     https://github.com/swagger-api/swagger-codegen
  */
-class X500Name implements ModelInterface, ArrayAccess
+class X500Name implements ModelInterface, ArrayAccess, \Stringable
 {
-    const DISCRIMINATOR = null;
+    final const DISCRIMINATOR = null;
 
     /**
      * The original name of the model.
@@ -198,13 +198,13 @@ class X500Name implements ModelInterface, ArrayAccess
      */
     public function __construct(array $data = null)
     {
-        $this->container['c'] = isset($data['c']) ? $data['c'] : null;
-        $this->container['st'] = isset($data['st']) ? $data['st'] : null;
-        $this->container['l'] = isset($data['l']) ? $data['l'] : null;
-        $this->container['o'] = isset($data['o']) ? $data['o'] : null;
-        $this->container['ou'] = isset($data['ou']) ? $data['ou'] : null;
-        $this->container['cn'] = isset($data['cn']) ? $data['cn'] : null;
-        $this->container['emailaddress'] = isset($data['emailaddress']) ? $data['emailaddress'] : null;
+        $this->container['c'] = $data['c'] ?? null;
+        $this->container['st'] = $data['st'] ?? null;
+        $this->container['l'] = $data['l'] ?? null;
+        $this->container['o'] = $data['o'] ?? null;
+        $this->container['ou'] = $data['ou'] ?? null;
+        $this->container['cn'] = $data['cn'] ?? null;
+        $this->container['emailaddress'] = $data['emailaddress'] ?? null;
     }
 
     /**
@@ -412,7 +412,7 @@ class X500Name implements ModelInterface, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+        return $this->container[$offset] ?? null;
     }
 
     /**
@@ -423,7 +423,7 @@ class X500Name implements ModelInterface, ArrayAccess
      *
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, mixed $value)
     {
         if (is_null($offset)) {
             $this->container[] = $value;
@@ -449,14 +449,14 @@ class X500Name implements ModelInterface, ArrayAccess
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if (defined('JSON_PRETTY_PRINT')) { // use JSON pretty print
-            return json_encode(
+            return (string) json_encode(
                 ObjectSerializer::sanitizeForSerialization($this),
                 JSON_PRETTY_PRINT
             );
         }
-        return json_encode(ObjectSerializer::sanitizeForSerialization($this));
+        return (string) json_encode(ObjectSerializer::sanitizeForSerialization($this), JSON_THROW_ON_ERROR);
     }
 }
