@@ -44,7 +44,7 @@ class ObjectSerializer
      *
      * @return string|object serialized form of $data
      */
-    public static function sanitizeForSerialization(mixed $data, $format = null): string|object|bool
+    public static function sanitizeForSerialization(mixed $data, $format = null)
     {
         if (is_scalar($data) || null === $data) {
             return $data;
